@@ -202,16 +202,6 @@ err = testPublisher.PublishWithMetaData(
 
 ---
 
-## Delay / отложенные сообщения (кратко)
-
-Если нужен delay без плагинов — классика: **TTL очередь + DLX**:
-- публикуешь в delay queue
-- TTL истекает → сообщение улетает в основной exchange/queue
-
-Рекомендуется оформить отдельный publisher `DelayPublisher` и отдельную очередь `*.delay`.
-
----
-
 ## Рекомендации по именованию
 
 Routing keys:
