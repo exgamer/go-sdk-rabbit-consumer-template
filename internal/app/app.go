@@ -31,11 +31,3 @@ func NewApp() (*App, error) {
 
 	return appInstance, nil
 }
-
-func (a *App) RunRabbitKernel() error {
-	if err := a.RunKernel(app2.RabbitKernelName); err != nil {
-		return err
-	}
-
-	return nil
-}
