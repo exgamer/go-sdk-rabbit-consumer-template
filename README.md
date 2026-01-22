@@ -62,7 +62,7 @@ Kernel подключается и инициализируется в `internal
 
 1) `RegisterAndInitKernels(...)` вызывает `RabbitKernel.Init()` — тут регистрируются registry в DI
 2) `RegisterAndInitModules(...)` — модули добавляют definitions (listeners/publishers) в registry
-3) `RunKernel("rabbit")` вызывает `RabbitKernel.Start()` — тут реально поднимается connection/consumer и т.п.
+3) `RunAll()` вызывает `RabbitKernel.Start()` — тут реально поднимается connection/consumer и т.п.
 
 ---
 

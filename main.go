@@ -11,7 +11,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = appInstance.RunRabbitKernel()
+	err = appInstance.RunAll()
 	if err != nil {
 		log.Fatal(err)
 	}
