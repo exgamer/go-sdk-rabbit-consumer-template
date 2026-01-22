@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/ThreeDotsLabs/watermill v1.5.1
 	github.com/exgamer/gosdk-core v1.0.16
-	github.com/exgamer/gosdk-rabbit-core v1.0.0
+	github.com/exgamer/gosdk-rabbit-core v1.0.1
 )
 
 require (
