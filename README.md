@@ -13,41 +13,24 @@
 
 ---
 
-## Быстрый старт
+## Для более детализированной информации ознакомьтесь в документацей к следующим пакетам
 
-### 1) Поднять RabbitMQ (локально)
+- [Документация GOSDK-CORE](https://github.com/exgamer/gosdk-core)
 
-Самый простой способ — Docker:
+- [Документация GOSDK-RABBIT-CORE](https://github.com/exgamer/gosdk-rabbit-core?tab=readme-ov-file)
 
-```bash
-docker run -d --name rabbit \
-  -p 5672:5672 -p 15672:15672 \
-  -e RABBITMQ_DEFAULT_USER=developer \
-  -e RABBITMQ_DEFAULT_PASS=qwerty123 \
-  rabbitmq:3-management
-```
+---
 
-UI: http://localhost:15672  
-Логин/пароль: `developer / qwerty123`
+## 🚀 Что даёт шаблон
 
-### 2) Настроить окружение
-
-Скопируй пример:
-
-```bash
-cp .env.example .env
-```
-
-Главные переменные:
-
-- `APP_NAME`, `APP_ENV`, `APP_VERSION`, `DEBUG`
-- `RABBITMQ_HOST`, `RABBITMQ_PORT`, `RABBITMQ_VHOST`, `RABBITMQ_USER`, `RABBITMQ_PASSWORD`
-
-### 3) Запустить сервис
-
-```bash
-go run ./main.go
-```
+- 🧠 Единый `App` lifecycle
+- 🌐 Готовый HTTP kernel (Gin)
+- 🧩 Dependency Injection из коробки
+- 🧱 Модульная архитектура (business modules)
+- ⚙️ Конфигурация через env
+- ♻️ Graceful shutdown
+- ❗ Стандартизированная обработка ошибок
+- 🧪 Удобная база для тестирования
 
 ---
 
@@ -80,125 +63,6 @@ Kernel подключается и инициализируется в `internal
 1) `RegisterAndInitKernels(...)` вызывает `RabbitKernel.Init()` — тут регистрируются registry в DI
 2) `RegisterAndInitModules(...)` — модули добавляют definitions (listeners/publishers) в registry
 3) `RunKernel("rabbit")` вызывает `RabbitKernel.Start()` — тут реально поднимается connection/consumer и т.п.
-
----
-
-## Listener (consumer): как добавить нового слушателя
-
-В `gosdk-rabbit-core` listener регистрируется как `config.HandlerRegister`:
-
-- `Handler` — функция обработки `(ctx, *message.Message) error`
-- `Config` — AMQP конфиг (exchange/queue/bind/qos/consumer tag)
-
-### 1) Создай consumer (обработчик)
-
-Пример (как в шаблоне `CityConsumer`):
-
-```go
-type CityConsumer struct {}
-
-func (c *CityConsumer) Consume(ctx context.Context, msg *message.Message) error {
-    fmt.Println(string(msg.Payload))
-    return nil
-}
-```
-
-### 2) Собери список handlers модуля
-
-Пример (как `internal/domains/.../consumers.go`):
-
-```go
-return []config.HandlerRegister{
-  {
-    Handler: consumersFactory.CityConsumer.Consume,
-    Config: config.NewConsumerTopicDurableConfig(
-      "test-consumer", // consumer tag (идентификатор консьюмера)
-      "test-rk",       // routing key
-      "test",          // exchange
-      "test",          // queue
-      100,             // prefetch
-    ),
-  },
-}
-```
-
-> **Consumer tag** в вашей версии задаётся через поле `ConsumeConfig.Consumer` внутри `NewConsumer*Config`.
-> Это имя будет видно в RabbitMQ UI в списке consumers у очереди.
-
-### 3) Зарегистрируй handlers в registry в Init() модуля
-
-Пример логики модуля (псевдо‑код, адаптируй под свой модуль):
-
-```go
-func (m *Module) Init(a *app.App) error {
-    reg, err := di.GetRabbitConsumersRegistry(a.Container)
-    if err != nil { return err }
-
-    consumersFactory := factories.NewCityConsumersFactory(testPublisher)
-    handlers := GetConsumers(consumersFactory)
-
-    reg.RegisterMultipleHandler(handlers)
-    return nil
-}
-```
-
-Kernel сам подхватит все зарегистрированные handlers при `RunKernel("rabbit")`.
-
----
-
-## Publisher: как объявить и использовать
-
-### 1) Объяви publisher definition
-
-Шаблон уже содержит `internal/publishers/publishers.go`:
-
-```go
-func GetPublishers() []config.PublisherDefinition {
-  return []config.PublisherDefinition{
-    {
-      Name:   "TestPublisher",
-      Config: config.NewPublisherTopicDurableConfig("test"),
-    },
-  }
-}
-```
-
-Где:
-- `Name` — имя паблишера в registry
-- `NewPublisherTopicDurableConfig("test")` — exchange = `test`
-
-### 2) Зарегистрируй publishers в registry (в Init() модуля)
-
-```go
-pubReg, err := di.GetRabbitPublishersRegistry(a.Container)
-if err != nil { return err }
-
-_ = pubReg.RegisterMultiple(publishers.GetPublishers())
-```
-
-### 3) Получи publisher по имени и публикуй
-
-```go
-testPublisher, err := pubReg.Get("TestPublisher")
-if err != nil { return err }
-
-payload := map[string]any{"id": 1, "name": "hello"}
-
-err = testPublisher.Publish("test-rk", payload) // topic = routing key
-if err != nil { return err }
-```
-
-С метаданными:
-
-```go
-err = testPublisher.PublishWithMetaData(
-  "test-rk",
-  map[string]string{
-    "trace_id": "abc-123",
-  },
-  payload,
-)
-```
 
 ---
 
