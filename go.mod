@@ -4,15 +4,15 @@ go 1.25.5
 
 require (
 	github.com/ThreeDotsLabs/watermill v1.5.1
-	github.com/exgamer/gosdk-core v1.0.16
-	github.com/exgamer/gosdk-rabbit-core v1.0.1
+	github.com/exgamer/gosdk-core v1.0.20
+	github.com/exgamer/gosdk-rabbit-core v1.0.2
 )
 
 require (
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.1.3 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/getsentry/sentry-go v0.41.0 // indirect
+	github.com/getsentry/sentry-go v0.43.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -29,6 +29,6 @@ require (
 	github.com/spf13/viper v1.21.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 )
