@@ -1,11 +1,11 @@
 module github.com/exgamer/gosdk-rabbitmq-consumer-template
 
-go 1.26.0
+go 1.27.3
 
 require (
 	github.com/ThreeDotsLabs/watermill v1.5.3
-	github.com/exgamer/gosdk-core v1.0.28
-	github.com/exgamer/gosdk-rabbit-core v1.0.12
+	github.com/exgamer/gosdk-core v1.0.29
+	github.com/exgamer/gosdk-rabbit-core v1.0.13
 )
 
 require (
